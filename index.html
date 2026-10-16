@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Firefox Demo Showcase — Watch &amp; share your feedback</title>
+  <meta name="description" content="Watch short video demos of what we're building and tell us what you think.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Firefox Demo Showcase home">
+        <img class="brand-logo" src="assets/firefox-logo-lockup-fullcolor-black-rgb.svg" alt="Firefox" width="1730" height="496">
+        <span class="brand-sub">Demo Showcase</span>
+      </a>
+      <a class="button button-small" data-feedback-link href="#feedback">Give feedback</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Intro -->
+    <section class="hero" id="top">
+      <div class="container">
+        <h1>See what we're building. <span class="gradient-text">Tell us what you think.</span></h1>
+        <p class="lead">Short demos of features in progress. Your feedback goes straight to the team building them.</p>
+      </div>
+    </section>
+
+    <!-- Demos -->
+    <section class="demos" id="demos" aria-label="Demos">
+      <div class="container">
+        <!-- Cards are rendered from the DEMOS list in script.js -->
+        <div class="demo-grid" id="demo-grid"></div>
+      </div>
+    </section>
+
+    <!-- Feedback -->
+    <section class="feedback" id="feedback" aria-labelledby="feedback-title">
+      <div class="container">
+        <div class="feedback-card">
+          <div>
+            <h2 id="feedback-title">Your feedback matters</h2>
+            <p>What worked, what didn't, what's missing? Takes about 3 minutes.</p>
+          </div>
+          <a class="button button-light" data-feedback-link href="#feedback">Open the feedback form</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Mozilla Corporation. Content available under a
+        <a href="https://www.mozilla.org/foundation/licensing/website-content/">Creative Commons license</a>.</p>
+      <ul class="footer-links">
+        <li><a href="https://www.mozilla.org/privacy/websites/">Privacy</a></li>
+        <li><a href="https://www.mozilla.org/about/legal/terms/mozilla/">Legal</a></li>
+        <li><a href="https://www.mozilla.org/">Mozilla</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
