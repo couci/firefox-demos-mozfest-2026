@@ -197,6 +197,46 @@ h1 { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); margin-bottom: 0.25em; }
     radial-gradient(circle at 15% 90%, rgba(255, 54, 71, 0.45), transparent 50%),
     var(--ink);
 }
+.video-preview {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--ink);
+}
+/* Blurred copy of the thumbnail fills the frame behind portrait (phone) videos */
+.video-preview::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: var(--thumb) center / cover no-repeat;
+  filter: blur(18px) brightness(0.55);
+}
+.video-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.video-preview .play-icon {
+  background: rgba(32, 18, 58, 0.6);
+  border-color: var(--white);
+  z-index: 1;
+  transition: transform 0.15s, background 0.15s;
+}
+.video-preview:hover .play-icon,
+.video-preview:focus-visible .play-icon {
+  transform: scale(1.08);
+  background: var(--violet-dark);
+}
+.video-preview:focus-visible { outline-offset: -4px; }
+
 .play-icon {
   width: 64px; height: 64px;
   border-radius: 50%;

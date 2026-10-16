@@ -7,51 +7,54 @@
 const FEEDBACK_FORM_URL = ""; // e.g. "https://forms.gle/XXXXXXXX"
 
 // 2. Your demos. For `video`, use one of:
+//    - a Panopto link (the normal "Viewer.aspx?id=..." share link is fine)
 //    - a YouTube embed URL:  "https://www.youtube-nocookie.com/embed/VIDEO_ID"
 //    - a Vimeo embed URL:    "https://player.vimeo.com/video/VIDEO_ID"
 //    - a direct video file:  "assets/my-demo.mp4"
 //    - "" to show a "coming soon" placeholder
+//    Panopto videos get their preview image automatically. For other videos you can
+//    add `thumbnail: "assets/my-preview.jpg"` to show a preview before playing.
 const DEMOS = [
   {
-    title: "Demo 1: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "3 min",
-    tag: "New",
-    video: "",
+    title: "Listen to Page",
+    description: "Have Firefox read a web page out loud, right from your Android phone.",
+    duration: "44 sec",
+    tag: "Android",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=3b0ec273-5ba3-453c-8cdd-b4e50080668c",
   },
   {
-    title: "Demo 2: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "3 min",
-    tag: "Beta",
-    video: "",
+    title: "PDF Signatures",
+    description: "Sign PDF documents directly in Firefox on Android.",
+    duration: "48 sec",
+    tag: "Android",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4b8d3c0d-a1cc-4940-8084-b4e500806691",
   },
   {
-    title: "Demo 3: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
+    title: "New Firefox Design",
+    description: "A first look at Nova, the new design for Firefox.",
     duration: "3 min",
-    tag: "Concept",
-    video: "",
+    tag: "Nova",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=32efde15-2d51-4dbf-b119-b4e300f32cc2",
   },
   {
     title: "Demo 4: Feature name",
     description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "3 min",
-    tag: "New",
+    duration: "",
+    tag: "",
     video: "",
   },
   {
     title: "Demo 5: Feature name",
     description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "3 min",
-    tag: "Beta",
+    duration: "",
+    tag: "",
     video: "",
   },
   {
     title: "Demo 6: Feature name",
     description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "3 min",
-    tag: "Concept",
+    duration: "",
+    tag: "",
     video: "",
   },
 ];
@@ -64,28 +67,60 @@ function escapeHtml(str) {
   }[c]));
 }
 
-function renderMedia(demo) {
+// Turns a Panopto share link (Viewer.aspx?id=...) into its embeddable player URL.
+function parsePanopto(url) {
+  const m = url.match(/^(https:\/\/[^/]+\.panopto\.(?:com|eu))\/Panopto\/Pages\/(?:Viewer|Embed)\.aspx\?(?:.*&)?id=([0-9a-f-]+)/i);
+  return m ? { host: m[1], id: m[2] } : null;
+}
+
+// Turns a Panopto share link (Viewer.aspx?id=...) into its embeddable player URL.
+function toEmbedUrl(url, autoplay) {
+  const p = parsePanopto(url);
+  if (p) {
+    return `${p.host}/Panopto/Pages/Embed.aspx?id=${p.id}&autoplay=${autoplay}&offerviewer=false&showtitle=false&showbrand=false&interactivity=none`;
+  }
+  return url;
+}
+
+function thumbnailFor(demo) {
+  if (demo.thumbnail) return demo.thumbnail;
+  const p = parsePanopto(demo.video);
+  return p ? `${p.host}/Panopto/PublicAPI/SessionPreviewImage?id=${p.id}` : "";
+}
+
+function playerHtml(demo, autoplay) {
   const title = escapeHtml(demo.title);
-  const src = escapeHtml(demo.video);
+  const src = escapeHtml(toEmbedUrl(demo.video, autoplay));
+  if (/\.(mp4|webm|ogg)(\?|$)/i.test(demo.video)) {
+    return `<video controls preload="metadata" ${autoplay ? "autoplay" : ""} src="${src}" aria-label="${title}"></video>`;
+  }
+  return `<iframe src="${src}" title="${title}"
+    allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+    allowfullscreen></iframe>`;
+}
+
+function renderMedia(demo, index) {
   if (!demo.video) {
     return `<div class="video-placeholder" role="img" aria-label="Video coming soon">
       <span class="play-icon" aria-hidden="true"></span>
       <span>Video coming soon</span>
     </div>`;
   }
-  if (/\.(mp4|webm|ogg)(\?|$)/i.test(demo.video)) {
-    return `<video controls preload="metadata" src="${src}" aria-label="${title}"></video>`;
-  }
-  return `<iframe src="${src}" title="${title}" loading="lazy"
-    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-    allowfullscreen></iframe>`;
+  const thumb = thumbnailFor(demo);
+  if (!thumb) return playerHtml(demo, false);
+  const src = escapeHtml(thumb);
+  return `<button class="video-preview" type="button" data-play="${index}" style="--thumb: url('${src}')">
+    <img src="${src}" alt="" loading="lazy">
+    <span class="play-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Play video: ${escapeHtml(demo.title)}</span>
+  </button>`;
 }
 
 function renderDemos() {
   const grid = document.getElementById("demo-grid");
-  grid.innerHTML = DEMOS.map((demo) => `
+  grid.innerHTML = DEMOS.map((demo, i) => `
     <article class="demo-card">
-      <div class="video-frame">${renderMedia(demo)}</div>
+      <div class="video-frame">${renderMedia(demo, i)}</div>
       <div class="demo-body">
         <div class="demo-meta">
           ${demo.tag ? `<span class="tag">${escapeHtml(demo.tag)}</span>` : ""}
@@ -107,6 +142,13 @@ function wireFeedbackLinks() {
     link.rel = "noopener";
   });
 }
+
+// Swap a preview for the real player when it's clicked.
+document.getElementById("demo-grid").addEventListener("click", (event) => {
+  const preview = event.target.closest("[data-play]");
+  if (!preview) return;
+  preview.outerHTML = playerHtml(DEMOS[preview.dataset.play], true);
+});
 
 renderDemos();
 wireFeedbackLinks();
