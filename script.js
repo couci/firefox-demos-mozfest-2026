@@ -4,7 +4,7 @@
 
 // 1. Paste your Google Form link here. Every "feedback" button on the page uses it.
 //    While it's empty, the buttons scroll to the feedback section instead.
-const FEEDBACK_FORM_URL = ""; // e.g. "https://forms.gle/XXXXXXXX"
+const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHFL1OijEd7ZiAr8Jz0GaFDb01n-qTwDK0WpU2ziSGVzPXAA/viewform";
 
 // 2. Your demos. For `video`, use one of:
 //    - a Panopto link (the normal "Viewer.aspx?id=..." share link is fine)
@@ -37,18 +37,18 @@ const DEMOS = [
     video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=32efde15-2d51-4dbf-b119-b4e300f32cc2",
   },
   {
-    title: "Demo 4: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "",
-    tag: "",
-    video: "",
+    title: "Split View",
+    description: "View two tabs side by side in Firefox on desktop.",
+    duration: "54 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=47907782-fc0f-456c-96b8-b4e8015184e4",
   },
   {
-    title: "Demo 5: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "",
-    tag: "",
-    video: "",
+    title: "Mini Window",
+    description: "A quick look at Mini Window in Firefox on desktop.",
+    duration: "1 min 36 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=5aa18363-9db8-4c08-9b66-b4e801516eb6",
   },
   {
     title: "Demo 6: Feature name",
