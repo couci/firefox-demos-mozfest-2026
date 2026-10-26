@@ -51,11 +51,32 @@ const DEMOS = [
     video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=5aa18363-9db8-4c08-9b66-b4e801516eb6",
   },
   {
-    title: "Demo 6: Feature name",
-    description: "A short sentence about what this demo shows and what you'd like viewers to focus on.",
-    duration: "",
-    tag: "",
-    video: "",
+    title: "Firefox Referrals Beta",
+    description: "Invite friends to Firefox. In beta and available in the US only for now.",
+    duration: "2 min 36 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=c7f4f85d-430f-484f-95f0-b4ef00eef139",
+  },
+  {
+    title: "Wallpapers",
+    description: "Personalize your New Tab page with a wallpaper.",
+    duration: "1 min 36 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=dfb7c8e1-7068-4b62-aa45-b4ec010e3eeb",
+  },
+  {
+    title: "Widgets",
+    description: "Add widgets like a focus timer, world clocks and weather to your New Tab page.",
+    duration: "3 min 11 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=93689edd-9e44-4f56-946b-b4ec010820dc",
+  },
+  {
+    title: "CVV Autofill",
+    description: "Firefox fills in your saved credit card details, including the security code (CVV).",
+    duration: "1 min 6 sec",
+    tag: "Desktop",
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=44966edf-ea2f-42c2-a136-b4eb01574f51",
   },
 ];
 
