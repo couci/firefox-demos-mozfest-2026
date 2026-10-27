@@ -1,20 +1,32 @@
 // ---------------------------------------------------------------------------
-// CONFIG — edit these two things.
+// CONFIG — edit these things.
 // ---------------------------------------------------------------------------
 
 // 1. Paste your Google Form link here. Every "feedback" button on the page uses it.
 //    While it's empty, the buttons scroll to the feedback section instead.
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHFL1OijEd7ZiAr8Jz0GaFDb01n-qTwDK0WpU2ziSGVzPXAA/viewform";
 
-// 2. Your demos. For `video`, use one of:
+// 2. How often the featured (big) demo changes, in seconds. Set to 0 to turn off.
+const FEATURE_ROTATE_SECONDS = 20;
+
+// 3. Your demos. For `video`, use one of:
 //    - a Panopto link (the normal "Viewer.aspx?id=..." share link is fine)
 //    - a YouTube embed URL:  "https://www.youtube-nocookie.com/embed/VIDEO_ID"
 //    - a Vimeo embed URL:    "https://player.vimeo.com/video/VIDEO_ID"
 //    - a direct video file:  "assets/my-demo.mp4"
 //    - "" to show a "coming soon" placeholder
+//    Add `featured: true` to choose which demo is featured first (the big card).
 //    Panopto videos get their preview image automatically. For other videos you can
 //    add `thumbnail: "assets/my-preview.jpg"` to show a preview before playing.
 const DEMOS = [
+  {
+    title: "Built-in VPN",
+    description: "Turn on Firefox's built-in VPN in one click, right from the toolbar, to browse more privately.",
+    duration: "1 min 31 sec",
+    tag: "Desktop",
+    featured: true,
+    video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=cbcc383a-4ab0-4a7b-8c01-b4f000907f33",
+  },
   {
     title: "Listen to Page",
     description: "Have Firefox read a web page out loud, right from your Android phone.",
@@ -137,13 +149,22 @@ function renderMedia(demo, index) {
   </button>`;
 }
 
+// Display order: order[0] is the featured demo, the rest fill the grid.
+const order = DEMOS.map((_, i) => i);
+const firstFeatured = DEMOS.findIndex((demo) => demo.featured);
+if (firstFeatured > 0) [order[0], order[firstFeatured]] = [order[firstFeatured], order[0]];
+
 function renderDemos() {
   const grid = document.getElementById("demo-grid");
-  grid.innerHTML = DEMOS.map((demo, i) => `
-    <article class="demo-card">
+  grid.innerHTML = order.map((i, position) => {
+    const demo = DEMOS[i];
+    const featured = position === 0;
+    return `
+    <article class="demo-card${featured ? " demo-card--featured" : ""}">
       <div class="video-frame">${renderMedia(demo, i)}</div>
       <div class="demo-body">
         <div class="demo-meta">
+          ${featured ? `<span class="tag tag--featured">Featured</span>` : ""}
           ${demo.tag ? `<span class="tag">${escapeHtml(demo.tag)}</span>` : ""}
           ${demo.duration ? `<span class="duration">${escapeHtml(demo.duration)}</span>` : ""}
         </div>
@@ -152,7 +173,9 @@ function renderDemos() {
         <a class="text-link" data-feedback-link href="#feedback">Give feedback on this demo &rarr;</a>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
+  wireFeedbackLinks();
 }
 
 function wireFeedbackLinks() {
@@ -164,13 +187,54 @@ function wireFeedbackLinks() {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Featured rotation. Each step swaps the featured demo with the next grid card,
+// so only two cards change and the rest stay put. Rotation pauses while someone
+// is watching or using the page, and resumes once the booth has been idle.
+// ---------------------------------------------------------------------------
+const IDLE_RESET_MS = 4 * 60 * 1000; // longer than the longest demo
+let nextSwap = 1;
+let lastActivity = 0;
+
+function isPlayerOpen() {
+  return document.querySelector("#demo-grid iframe, #demo-grid video") !== null;
+}
+
+function markActivity() {
+  lastActivity = Date.now();
+}
+
+function rotateFeatured() {
+  if (document.hidden || order.length < 2) return;
+  const idle = Date.now() - lastActivity > IDLE_RESET_MS;
+  if (isPlayerOpen() && !idle) return;
+  if (!isPlayerOpen() && Date.now() - lastActivity < FEATURE_ROTATE_SECONDS * 1000) return;
+
+  [order[0], order[nextSwap]] = [order[nextSwap], order[0]];
+  nextSwap = nextSwap + 1 < order.length ? nextSwap + 1 : 1;
+
+  const grid = document.getElementById("demo-grid");
+  grid.classList.add("is-swapping");
+  setTimeout(() => {
+    renderDemos();
+    grid.classList.remove("is-swapping");
+  }, 300);
+}
+
+["pointerdown", "keydown", "wheel", "touchstart"].forEach((type) =>
+  window.addEventListener(type, markActivity, { passive: true })
+);
+// Clicking inside a video player moves focus into its frame — count that as activity too.
+window.addEventListener("blur", markActivity);
+
 // Swap a preview for the real player when it's clicked.
 document.getElementById("demo-grid").addEventListener("click", (event) => {
   const preview = event.target.closest("[data-play]");
   if (!preview) return;
+  markActivity();
   preview.outerHTML = playerHtml(DEMOS[preview.dataset.play], true);
 });
 
 renderDemos();
-wireFeedbackLinks();
+if (FEATURE_ROTATE_SECONDS > 0) setInterval(rotateFeatured, FEATURE_ROTATE_SECONDS * 1000);
 document.getElementById("year").textContent = new Date().getFullYear();
