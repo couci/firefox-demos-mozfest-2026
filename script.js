@@ -36,9 +36,9 @@ const DEMOS = [
   },
   {
     title: "PDF Signatures",
-    description: "Sign PDF documents directly in Firefox on Android.",
+    description: "Sign PDF documents directly in Firefox on Android and desktop.",
     duration: "48 sec",
-    tag: "Android",
+    tag: "Android & Desktop",
     video: "https://mozilla.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4b8d3c0d-a1cc-4940-8084-b4e500806691",
   },
   {
